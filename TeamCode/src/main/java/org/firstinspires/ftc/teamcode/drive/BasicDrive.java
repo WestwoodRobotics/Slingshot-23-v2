@@ -1,20 +1,23 @@
 package org.firstinspires.ftc.teamcode.drive;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BasicDrive extends OpMode {
     private DcMotorEx leftFront, leftBack, rightFront, rightBack;
-    private Telemetry telemetry;
+    private Telemetry telemetry; //idk how telemetry works
     IMU imu;
+    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+    public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
+            RevHubOrientationOnRobot.UsbFacingDirection.UP;
+    @Override
     public void init(){
         //initializes the motors
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -36,8 +39,7 @@ public class BasicDrive extends OpMode {
 
         //imu initialized
         imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(LOGO_FACING_DIR, USB_FACING_DIR));
         imu.initialize(parameters);
 
 
@@ -53,12 +55,12 @@ public class BasicDrive extends OpMode {
         if(gamepad1.options) imu.resetYaw();
 
         //sets the outputs to be field centric
-        heading = normalizedHeading();
+        double heading = normalizedHeading();
         x = x * Math.cos(-heading) - y * Math.sin(-heading);
         y = y * Math.cos(-heading) + x * Math.sin(-heading);
 
         //outputs the x, y, and rotation and the heading of the robot (after field centric)
-        telemetry.addData("x y rot: ", x+", "+r+", "+rot);
+        telemetry.addData("x y rot: ", x+", "+y+", "+rot);
         telemetry.addData("heading: ", heading);
         //sets the power of the motors
         leftFront.setVelocity(y + x + rot);
