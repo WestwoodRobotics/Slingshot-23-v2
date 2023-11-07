@@ -18,13 +18,10 @@ public class Drive {
     private DcMotorEx leftFront, leftBack, rightFront, rightBack;
     double heading;
 
+
     //auton only
     double idealHeading;
     boolean locked_heading = false;
-    private ElapsedTime dt = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    private final double[] pidCoeffs = new double[] {2, 0.1, 0, 0};
-    private final PIDCoefficients coeffs = new PIDCoefficients(pidCoeffs[0], pidCoeffs[1], pidCoeffs[2]);
-    private PIDFController turnController = new PIDFController(coeffs);
 
     public Drive(Gamepad gamepad1, IMU imu, Telemetry telemetry, DcMotorEx LF, DcMotorEx LB, DcMotorEx RF, DcMotorEx RB)
     {
@@ -47,6 +44,7 @@ public class Drive {
         this.rightBack = RB;
         this.rightFront = RF;
         locked_heading = auton;
+
     }
 
     public void update() {
@@ -59,19 +57,6 @@ public class Drive {
         //resets the imu if you press options
         if (gamepad1.options) {
             imu.resetYaw();
-        }
-        //locked heading?
-        if (locked_heading) {
-            idealHeading -= rotInput * Math.PI * (dt.milliseconds() / 1000.0);
-            idealHeading = normalizeAngle(idealHeading);
-            dt.reset();
-
-            telemetry.addData("ideal heading: ", idealHeading);
-            telemetry.addData("dt: ", dt.milliseconds() / 1000.0);
-
-            if (gamepad1.a) {
-                rotOut = calcRotBasedOnIdeal(rotInput);
-            }
         }
 
 
@@ -86,7 +71,8 @@ public class Drive {
         telemetry.addData("heading: ", heading);
 
         //slowmode
-        double slow = (gamepad1.left_trigger > 0.9) ? 1: 0;
+
+        double slow = (gamepad1.left_trigger > 0.9) ? 1: 0.5;
 
         //sets the power of the motors
         leftFront.setPower((yOut + xOut + rotOut)*slow);
@@ -111,16 +97,6 @@ public class Drive {
     }
 
     private double calcRotBasedOnIdeal(double r) {
-        // Error in rotations (should always be between (-0.5,0.5))
-        double err = angleWrap(idealHeading - heading);
-        telemetry.addData("err: ", Math.toDegrees(angleWrap(idealHeading - heading)));
-        turnController.setTargetPosition(0);
-        // If abs(error) is less than 0.01 of a rotation, don't turn
-        // else if abs(error) is less than 0.3, turn with err*2
-        // Otherwise, turn with full power
-        turnController.setOutputBounds(-1,1);
-        double correction = turnController.update(err);
-        telemetry.addData("correction: ", correction);
-        return correction;
+
     }
 }

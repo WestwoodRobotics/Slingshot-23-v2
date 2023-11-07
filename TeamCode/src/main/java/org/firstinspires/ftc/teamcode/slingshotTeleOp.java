@@ -23,10 +23,10 @@ public class slingshotTeleOp extends OpMode {
     @Override
     public void init(){
         //initializes the motors
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
+        this.leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        this.rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        this.leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        this. rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
 
         //reverses the left motors
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -47,8 +47,9 @@ public class slingshotTeleOp extends OpMode {
 
     drive = new Drive(gamepad1, imu, telemetry, leftFront, leftBack, rightFront, rightBack);
     }
-    public void loop(){
-        drive.update();
+    public void loop()
+    {
+        this.drive.update();
     }
 
 }
