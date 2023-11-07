@@ -97,6 +97,6 @@ public class Drive {
     }
 
     private double calcRotBasedOnIdeal(double r) {
-
+        return r;
     }
 }
