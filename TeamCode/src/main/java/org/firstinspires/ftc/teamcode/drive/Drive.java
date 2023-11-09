@@ -17,12 +17,6 @@ public class Drive {
     private Telemetry telemetry;
     private DcMotorEx leftFront, leftBack, rightFront, rightBack;
     double heading;
-
-
-    //auton only
-    double idealHeading;
-    boolean locked_heading = false;
-
     public Drive(Gamepad gamepad1, IMU imu, Telemetry telemetry, DcMotorEx LF, DcMotorEx LB, DcMotorEx RF, DcMotorEx RB)
     {
         this.gamepad1 = gamepad1;
@@ -32,18 +26,6 @@ public class Drive {
         this.leftFront = LF;
         this.rightBack = RB;
         this.rightFront = RF;
-
-    }
-    public Drive(Gamepad gamepad1, IMU imu, Telemetry telemetry, DcMotorEx LF, DcMotorEx LB, DcMotorEx RF, DcMotorEx RB, boolean auton)
-    {
-        this.gamepad1 = gamepad1;
-        this.imu = imu;
-        this.telemetry = telemetry;
-        this.leftBack = LB;
-        this.leftFront = LF;
-        this.rightBack = RB;
-        this.rightFront = RF;
-        locked_heading = auton;
 
     }
 
@@ -83,20 +65,21 @@ public class Drive {
 
     private double normalizeAngle(double angle) {
         // Normalizes angle in [0,360] range
-        while (angle > 2*Math.PI) angle-=2*Math.PI;
-        while (angle < 0) angle+= 2*Math.PI;
-        return angle;
+        double out = angle;
+        while (Math.abs(out)>2*Math.PI) out-=2*Math.PI*(out>0?1:-1);
+        return out;
     }
 
     private double angleWrap(double angle) {
-        // Changes any angle between [-180,180] degrees
-        // If rotation is greater than half a full rotation, it would be more efficient to turn the other way
-        while (Math.abs(angle) > Math.PI)
-            angle -= 2*Math.PI * (angle>0?1:-1);
+        double out = angle;
+        while (Math.abs(out) > Math.PI)
+            out -= 2*Math.PI * (out>0?1:-1);
         return angle;
     }
-
-    private double calcRotBasedOnIdeal(double r) {
-        return r;
+    private double rotBasedOnIdeal(double angle){
+        //angle []
+        double out = normalizeAngle(angle);
+        return out;
     }
+
 }
